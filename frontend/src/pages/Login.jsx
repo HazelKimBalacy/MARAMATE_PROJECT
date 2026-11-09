@@ -7,7 +7,12 @@ import { useAuth } from '../auth.jsx'
 export default function Login() {
   const { login } = useAuth()
   const navigate = useNavigate()
-  const notice = useLocation().state?.notice
+  const location = useLocation()
+  const notice = location.state?.notice
+  const continuation = new URLSearchParams(location.search).get('continue')
+  const returnTo = continuation?.startsWith('/?movie=') && !continuation.startsWith('//')
+    ? continuation
+    : '/home'
 
   const [form, setForm] = useState({ email: '', password: '' })
   const [errors, setErrors] = useState({})
@@ -28,7 +33,7 @@ export default function Login() {
     setBusy(true)
     try {
       await login(form.email.trim(), form.password)
-      navigate('/home', { replace: true })
+      navigate(returnTo, { replace: true })
     } catch (err) {
       setErrors(err.fieldErrors || {})
       setFormError(err.message)
@@ -41,7 +46,7 @@ export default function Login() {
     <AuthShell
       title="Welcome back"
       intro="Log in to reserve seats and see your tickets."
-      footer={<>New to MaraMate? <Link to="/signup">Create an account</Link></>}
+      footer={<>New to MaraMate? <Link to={`/signup${location.search}`}>Create an account</Link></>}
     >
       {notice && <p className="banner banner-ok" role="status">{notice}</p>}
       {formError && <p className="banner banner-error" role="alert">{formError}</p>}

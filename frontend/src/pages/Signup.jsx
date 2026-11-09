@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import AuthShell from '../components/AuthShell.jsx'
 import Field from '../components/Field.jsx'
 import { api } from '../api.js'
@@ -21,7 +21,12 @@ function validate(f) {
 
 export default function Signup() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [params] = useSearchParams()
+  const continuation = params.get('continue')
+  const continueQuery = continuation?.startsWith('/?movie=') && !continuation.startsWith('//')
+    ? `?${new URLSearchParams({ continue: continuation })}`
+    : ''
 
   const [form, setForm] = useState({
     role: params.get('role') === 'organizer' ? 'ORGANIZER' : 'MOVIEGOER',
@@ -45,7 +50,7 @@ export default function Signup() {
       const body = { ...form }
       delete body.confirm
       const user = await api('/auth/register', { method: 'POST', body })
-      navigate('/login', {
+      navigate(`/login${continueQuery}`, {
         replace: true,
         state: {
           notice: user.status === 'PENDING'
@@ -65,7 +70,7 @@ export default function Signup() {
     <AuthShell
       title="Create your account"
       intro="It takes a minute. You only need a name, email, and mobile number."
-      footer={<>Already have an account? <Link to="/login">Log in</Link></>}
+      footer={<>Already have an account? <Link to={`/login${location.search}`}>Log in</Link></>}
     >
       {formError && <p className="banner banner-error" role="alert">{formError}</p>}
 

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import Logo from '../components/Logo.jsx'
 import SeatMap from '../components/SeatMap.jsx'
-import Timeline from '../components/Timeline.jsx'
+import MovieCards from '../components/MovieCards.jsx'
 import '../styles/landing.css'
 
 const FEATURES = [
@@ -66,12 +66,11 @@ export default function Landing() {
 
         <section className="section section-haze" id="lineup">
           <div className="wrap">
-            <h2 className="narrow">Know the whole night before you book.</h2>
+            <h2 className="narrow">Find your next movie night.</h2>
             <p className="muted narrow">
-              Every event page lists the films in order with start times, breaks, and the total running time.
-              Here is a sample Studio Ghibli night.
+              Browse upcoming movie events and check each screening time before you book.
             </p>
-            <Timeline />
+            <MovieCards />
           </div>
         </section>
 
