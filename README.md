@@ -6,8 +6,9 @@ Data JPA in MySQL; passwords are BCrypt-hashed and login returns a JWT.
 
 ## Requirements
 
-- JDK 17
+- JDK 26
 - MySQL 8
+- SupaBase
 - Node.js and npm
 
 ## Run locally (Windows PowerShell)
