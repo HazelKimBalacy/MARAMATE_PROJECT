@@ -2,7 +2,10 @@ import { Link } from 'react-router-dom'
 import Logo from '../components/Logo.jsx'
 import SeatMap from '../components/SeatMap.jsx'
 import MovieCards from '../components/MovieCards.jsx'
+import { useAuth } from '../auth.jsx'
 import '../styles/landing.css'
+
+const ROLE = { MOVIEGOER: 'Moviegoer', ORGANIZER: 'Organizer', CHECKIN_STAFF: 'Check-in staff', ADMIN: 'Administrator' }
 
 const FEATURES = [
   ['See every seat', 'A live seat map shows what is open, held for payment, or already booked, so no seat is sold twice.'],
@@ -13,6 +16,8 @@ const FEATURES = [
 ]
 
 export default function Landing() {
+  const { user, loading, logout } = useAuth()
+
   return (
     <>
       <header className="nav">
@@ -20,9 +25,21 @@ export default function Landing() {
           <Logo />
           <nav className="nav-links" aria-label="Main">
             <a href="#features">Features</a>
-            <a href="#lineup">Lineups</a>
-            <Link to="/login">Log in</Link>
-            <Link to="/signup" className="btn btn-cream btn-sm">Sign up</Link>
+            <a href="#lineup">Movies</a>
+            {user ? (
+              <>
+                <span className="nav-account">Logged in as {ROLE[user.role] || user.role}</span>
+                <Link to="/profile" className="btn btn-ghost btn-sm">My profile</Link>
+                <button className="btn btn-cream btn-sm" type="button" onClick={logout}>Log out</button>
+              </>
+            ) : loading ? (
+              <span className="nav-account" role="status">Checking your account…</span>
+            ) : (
+              <>
+                <Link to="/login">Log in</Link>
+                <Link to="/signup" className="btn btn-cream btn-sm">Sign up</Link>
+              </>
+            )}
           </nav>
         </div>
       </header>
@@ -31,16 +48,34 @@ export default function Landing() {
         <section className="hero">
           <div className="wrap hero-grid">
             <div className="hero-copy">
-              <h1>Your seat for the whole marathon.</h1>
+              <h1>{user ? `Hi, ${user.fullName.split(' ')[0]}.` : 'Your seat for the whole marathon.'}</h1>
               <p className="lead">
-                Browse movie marathons, pick your seats on a live map, pay online, and walk in with a QR ticket.
+                {user
+                  ? 'Browse the movies below, choose a screening, and reserve your seats.'
+                  : 'Browse movie marathons, pick your seats on a live map, pay online, and walk in with a QR ticket.'}
               </p>
               <div className="hero-actions">
-                <Link to="/signup" className="btn btn-cream">Create an account</Link>
-                <Link to="/login" className="btn btn-ghost">Log in</Link>
+                {user ? (
+                  <a href="#lineup" className="btn btn-cream">Browse movies</a>
+                ) : loading ? null : (
+                  <>
+                    <Link to="/signup" className="btn btn-cream">Create an account</Link>
+                    <Link to="/login" className="btn btn-ghost">Log in</Link>
+                  </>
+                )}
               </div>
             </div>
             <SeatMap />
+          </div>
+        </section>
+
+        <section className="section section-haze" id="lineup">
+          <div className="wrap">
+            <h2 className="narrow">Find your next movie night.</h2>
+            <p className="muted narrow">
+              Browse upcoming movie events and check each screening time before you book.
+            </p>
+            <MovieCards />
           </div>
         </section>
 
@@ -64,31 +99,23 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="section section-haze" id="lineup">
-          <div className="wrap">
-            <h2 className="narrow">Find your next movie night.</h2>
-            <p className="muted narrow">
-              Browse upcoming movie events and check each screening time before you book.
-            </p>
-            <MovieCards />
-          </div>
-        </section>
-
-        <section className="section section-ink">
-          <div className="wrap cta">
-            <div>
-              <h2>Running a marathon?</h2>
-              <p className="lead-sm">
-                Register as an organizer to set up venues, seat maps, and film lineups. An administrator
-                approves new organizer accounts before you can publish events.
-              </p>
+        {!user && (
+          <section className="section section-ink">
+            <div className="wrap cta">
+              <div>
+                <h2>Running a marathon?</h2>
+                <p className="lead-sm">
+                  Register as an organizer to set up venues, seat maps, and film lineups. An administrator
+                  approves new organizer accounts before you can publish events.
+                </p>
+              </div>
+              <div className="cta-actions">
+                <Link to="/signup?role=organizer" className="btn btn-cream">Register as an organizer</Link>
+                <Link to="/signup" className="btn btn-ghost">Join as a moviegoer</Link>
+              </div>
             </div>
-            <div className="cta-actions">
-              <Link to="/signup?role=organizer" className="btn btn-cream">Register as an organizer</Link>
-              <Link to="/signup" className="btn btn-ghost">Join as a moviegoer</Link>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
       </main>
 
       <footer className="footer">

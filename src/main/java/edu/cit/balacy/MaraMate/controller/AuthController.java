@@ -33,4 +33,29 @@ public class AuthController {
 	public UserResponse me(@AuthenticationPrincipal Jwt jwt) {
 		return auth.me(Long.valueOf(jwt.getSubject()));
 	}
+
+	@PutMapping("/me")
+	public UserResponse updateProfile(
+			@AuthenticationPrincipal Jwt jwt,
+			@Valid @RequestBody UpdateProfileRequest req) {
+		return auth.updateProfile(Long.valueOf(jwt.getSubject()), req);
+	}
+
+	@PostMapping("/change-password")
+	public MessageResponse changePassword(
+			@AuthenticationPrincipal Jwt jwt,
+			@Valid @RequestBody ChangePasswordRequest req) {
+		return auth.changePassword(Long.valueOf(jwt.getSubject()), req);
+	}
+
+	@PostMapping("/forgot-password")
+	public MessageResponse forgotPassword(@Valid @RequestBody ForgotPasswordRequest req) {
+		return auth.requestPasswordReset(req);
+	}
+
+	@PostMapping("/reset-password")
+	public MessageResponse resetPassword(@Valid @RequestBody ResetPasswordRequest req) {
+		return auth.resetPassword(req);
+	}
+
 }

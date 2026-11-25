@@ -30,6 +30,11 @@ public class User {
 	@Column(nullable = false)
 	private String passwordHash;
 
+	@Column(length = 64)
+	private String passwordResetTokenHash;
+
+	private Instant passwordResetExpiresAt;
+
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 20)
 	private Role role;

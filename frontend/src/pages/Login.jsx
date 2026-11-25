@@ -12,7 +12,7 @@ export default function Login() {
   const continuation = new URLSearchParams(location.search).get('continue')
   const returnTo = continuation?.startsWith('/?movie=') && !continuation.startsWith('//')
     ? continuation
-    : '/home'
+    : '/'
 
   const [form, setForm] = useState({ email: '', password: '' })
   const [errors, setErrors] = useState({})
@@ -56,6 +56,7 @@ export default function Login() {
           value={form.email} onChange={set} error={errors.email} />
         <Field label="Password" name="password" type="password" autoComplete="current-password"
           value={form.password} onChange={set} error={errors.password} />
+        <p className="forgot-link"><Link to="/forgot-password">Forgot password?</Link></p>
         <button className="btn btn-ink btn-block" disabled={busy}>
           {busy ? 'Logging in…' : 'Log in'}
         </button>

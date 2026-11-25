@@ -40,7 +40,11 @@ public class SecurityConfig {
 				.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-						.requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+						.requestMatchers(
+								"/api/auth/register",
+								"/api/auth/login",
+								"/api/auth/forgot-password",
+								"/api/auth/reset-password").permitAll()
 						.anyRequest().authenticated())
 				.oauth2ResourceServer(oauth -> oauth
 						.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
